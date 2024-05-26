@@ -2,7 +2,7 @@
 
 int main(int argc, const char **argv)
 {
-    printf("INFRA");
+    printf("INFRA!\n");
     
     return 0;
 }

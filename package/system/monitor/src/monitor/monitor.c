@@ -2,7 +2,7 @@
 
 int main(int argc, const char **argv)
 {
-    printf("MONITOR");
+    printf("MONITOR!\n");
     
     return 0;
 }

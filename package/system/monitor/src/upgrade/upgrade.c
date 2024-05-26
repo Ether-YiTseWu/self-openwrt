@@ -1,64 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 
-#define USB_MOUNT_PATH "/mnt/usb"
-#define FIRMWARE_FILE_PATH "/mnt/usb/fw.bin"
-#define FIRMWARE_DEST_PATH "/tmp/fw.bin"
+#define USB_PATH "/dev/sda1"
+#define USB_MOUNT_PATH "/mnt"
+#define FIRMWARE_FILE_PATH "/mnt/fw.img"
 
 int main() 
 {
-    char buf[256];
-
+    char cmd[128] = {0};
     while (1) 
     {
-        FILE *udev_monitor = popen("udevadm monitor -u -s usb", "r");
-        if (!udev_monitor) 
+        if (access(USB_PATH, F_OK) == -1)
         {
-            perror("Error opening udev monitor");
-            return 1;
+            printf("Not insert USB.\n");
+            sleep(1);
+            continue;
         }
 
-        while (fgets(buf, sizeof(buf), udev_monitor) != NULL) 
+        printf("Insert USB.\n");
+        sprintf(cmd, "mount %s %s", USB_PATH, USB_MOUNT_PATH);
+        system(cmd);
+        sleep(5);
+        
+        if (access(FIRMWARE_FILE_PATH, F_OK) != -1) 
+        {    
+            printf("Firmware installing...\n");
+            sprintf(cmd, "sysupgrade -F %s", FIRMWARE_FILE_PATH);
+            system(cmd);     
+            sleep(60);
+        } 
+        else 
         {
-            if (strstr(buf, "add") != NULL && strstr(buf, "usb") != NULL) 
-            {
-                printf("USB inserted. Updating firmware...\n");
-
-                if (system("mount /dev/sda1 " USB_MOUNT_PATH) == -1)
-                {
-                    perror("Error mounting USB device");
-                    return 1;
-                }
-
-                if (access(FIRMWARE_FILE_PATH, F_OK) != -1) 
-                {
-                    if (rename(FIRMWARE_FILE_PATH, FIRMWARE_DEST_PATH) == -1) 
-                    {
-                        perror("Error updating firmware");
-                        return 1;
-                    }
-                    system("sysupgrade -v /tmp/fw.bin");
-                    printf("Firmware updated.\n");
-                } 
-                else 
-                {
-                    printf("Firmware file not found.\n");
-                }
-
-                if (system("umount " USB_MOUNT_PATH) == -1) 
-                {
-                    perror("Error unmounting USB device");
-                    return 1;
-                }
-            }
+            printf("Firmware file not found.\n");
         }
 
-        pclose(udev_monitor);
+        sleep(1);
     }
 
     return 0;
