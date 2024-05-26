@@ -16,4 +16,4 @@ The final target is to build a safety watcher for home.
 ## Usage
 - putToSD.sh : put img into sd card (do partition)
 - putToUSB.sh : copy img into USB flash (no partition, it's raw img)
-- self-openwrt/package/system/monitor/ : My own package
+- /package/system/monitor/ : It's the project codebase
