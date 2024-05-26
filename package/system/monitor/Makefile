@@ -1,50 +1,45 @@
-##############################################
-# 
-# OpenWrt Makefile for monitor program
-#
-##############################################
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/kernel.mk
 
-PKG_NAME:=monitor
-PKG_VERSION:=0.1
-PKG_RELEASE:=1
-
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+PKG_NAME := monitor
+PKG_VERSION := 1.0
+PKG_RELEASE := 1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/$(PKG_NAME)
+define Package/monitor
 	SECTION:=utils
-	CATEGORY:=Ether.Wu Package
-	SUBMENU:=Monitor side project
-	TITLE:=This is Ether.Wu's side project.
-	MAINTAINER:=Ether.Wu
+	CATEGORY:=Utilities
+	TITLE:=monitor
 endef
 
-define Package/$(PKG_NAME)/description
-	Ether.Wu's side project.
+define Package/monitor/description
+	Ether.wu side project
 endef
+
+PROCESS1_DIR := $(PKG_BUILD_DIR)/monitor
+PROCESS2_DIR := $(PKG_BUILD_DIR)/infra
+PROCESS3_DIR := $(PKG_BUILD_DIR)/upgrade
 
 define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
-endef
-
-define Build/Configure
+	mkdir -p $(PROCESS1_DIR)
+	$(CP) ./src/monitor/* $(PROCESS1_DIR)/
+	mkdir -p $(PROCESS2_DIR)
+	$(CP) ./src/infra/*   $(PROCESS2_DIR)/
+	mkdir -p $(PROCESS3_DIR)
+	$(CP) ./src/upgrade/* $(PROCESS3_DIR)/
 endef
 
 define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR) \
-		ARCH="$(LINUX_KARCH)" \
-		CC="$(TARGET_CC)" \
-		CFLAGS="$(TARGET_CFLAGS) -Wall" \
-		LDFLAGS="$(TARGET_LDFLAGS)"
+	$(MAKE) -C $(PROCESS1_DIR) $(TARGET_CONFIGURE_OPTS) all
+	$(MAKE) -C $(PROCESS2_DIR) $(TARGET_CONFIGURE_OPTS) all
+	$(MAKE) -C $(PROCESS3_DIR) $(TARGET_CONFIGURE_OPTS) all
 endef
 
-define Package/$(PKG_NAME)/install
+define Package/monitor/install
 	$(INSTALL_DIR) $(1)/app
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME) $(1)/app/
+	$(INSTALL_BIN) $(PROCESS1_DIR)/monitor $(1)/app
+	$(INSTALL_BIN) $(PROCESS2_DIR)/infra   $(1)/app
+	$(INSTALL_BIN) $(PROCESS3_DIR)/upgrade $(1)/app
 endef
 
-$(eval $(call BuildPackage,$(PKG_NAME)))
+$(eval $(call BuildPackage,monitor))
