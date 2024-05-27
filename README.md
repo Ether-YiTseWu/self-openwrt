@@ -1,5 +1,5 @@
 # Ether.Wu OpenWRT
-For self-learning and personal tutor~    
+For self-learning and teaching~    
 The final target is to build a safety watcher for home.     
 
 ## Source
