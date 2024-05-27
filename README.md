@@ -3,17 +3,17 @@ For self-learning and teaching~
 The final target is to build a safety watcher for home.     
 
 ## Source
+### Hardware
+- Raspberry Pi 3B+
+- Arduino
+- Logitech C920
+
 ### OS
 - OpenWRT (Raspberry Pi)
 - FreeRTOS (Arduino)
 
 ### Software
 -
-
-### Hardware
-- Raspberry Pi 3B+
-- Arduino
-- Logitech C920
 
 ## Usage
 - putToSD.sh : put img into sd card (do partition)
