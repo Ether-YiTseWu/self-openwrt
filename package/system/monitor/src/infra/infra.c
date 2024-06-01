@@ -2,7 +2,10 @@
 
 int main(int argc, const char **argv)
 {
-    printf("INFRA!\n");
+    printf("INFRA INIT\n");
+
+    system("/app/monitor &");
+    system("/app/upgrade &");
     
     return 0;
 }
