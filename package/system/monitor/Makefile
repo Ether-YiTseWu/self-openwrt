@@ -16,30 +16,28 @@ define Package/monitor/description
 	Ether.wu side project
 endef
 
-PROCESS1_DIR := $(PKG_BUILD_DIR)/monitor
-PROCESS2_DIR := $(PKG_BUILD_DIR)/infra
-PROCESS3_DIR := $(PKG_BUILD_DIR)/upgrade
+PROCESSES := monitor infra upgrade
+PROCESS_DIR := $(PKG_BUILD_DIR)
 
 define Build/Prepare
-	mkdir -p $(PROCESS1_DIR)
-	$(CP) ./src/monitor/* $(PROCESS1_DIR)/
-	mkdir -p $(PROCESS2_DIR)
-	$(CP) ./src/infra/*   $(PROCESS2_DIR)/
-	mkdir -p $(PROCESS3_DIR)
-	$(CP) ./src/upgrade/* $(PROCESS3_DIR)/
+	$(foreach process,$(PROCESSES), \
+		mkdir -p $(PROCESS_DIR)/$(process); \
+		$(CP) ./src/$(process)/* $(PROCESS_DIR)/$(process)/; \
+	)
 endef
 
 define Build/Compile
-	$(MAKE) -C $(PROCESS1_DIR) $(TARGET_CONFIGURE_OPTS) all
-	$(MAKE) -C $(PROCESS2_DIR) $(TARGET_CONFIGURE_OPTS) all
-	$(MAKE) -C $(PROCESS3_DIR) $(TARGET_CONFIGURE_OPTS) all
+	$(foreach process,$(PROCESSES), \
+		$(MAKE) -C $(PROCESS_DIR)/$(process) $(TARGET_CONFIGURE_OPTS) all; \
+	)
 endef
 
 define Package/monitor/install
 	$(INSTALL_DIR) $(1)/app
-	$(INSTALL_BIN) $(PROCESS1_DIR)/monitor $(1)/app
-	$(INSTALL_BIN) $(PROCESS2_DIR)/infra   $(1)/app
-	$(INSTALL_BIN) $(PROCESS3_DIR)/upgrade $(1)/app
+	$(foreach process,$(PROCESSES), \
+		$(INSTALL_BIN) $(PROCESS_DIR)/$(process)/$(process) $(1)/app; \
+	)
 endef
 
 $(eval $(call BuildPackage,monitor))
+
