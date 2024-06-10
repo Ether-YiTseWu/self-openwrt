@@ -16,26 +16,26 @@ define Package/monitor/description
 	Ether.wu side project
 endef
 
-PROCESSES := monitor infra upgrade
+PROCESSES := $(shell find ./src -maxdepth 1 -type d ! -path ./src ! -path ./src/.)
 PROCESS_DIR := $(PKG_BUILD_DIR)
 
 define Build/Prepare
 	$(foreach process,$(PROCESSES), \
-		mkdir -p $(PROCESS_DIR)/$(process); \
-		$(CP) ./src/$(process)/* $(PROCESS_DIR)/$(process)/; \
+		mkdir -p $(PROCESS_DIR)/$(notdir $(process)); \
+		$(CP) $(process)/* $(PROCESS_DIR)/$(notdir $(process))/; \
 	)
 endef
 
 define Build/Compile
 	$(foreach process,$(PROCESSES), \
-		$(MAKE) -C $(PROCESS_DIR)/$(process) $(TARGET_CONFIGURE_OPTS) all; \
+		$(MAKE) -C $(PROCESS_DIR)/$(notdir $(process)) $(TARGET_CONFIGURE_OPTS) all; \
 	)
 endef
 
 define Package/monitor/install
 	$(INSTALL_DIR) $(1)/app
 	$(foreach process,$(PROCESSES), \
-		$(INSTALL_BIN) $(PROCESS_DIR)/$(process)/$(process) $(1)/app; \
+		$(INSTALL_BIN) $(PROCESS_DIR)/$(notdir $(process))/$(notdir $(process)) $(1)/app; \
 	)
 endef
 

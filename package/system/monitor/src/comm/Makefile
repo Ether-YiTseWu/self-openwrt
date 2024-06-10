@@ -1,6 +1,6 @@
-SRCS := /home/ether/self-openwrt/package/system/monitor/include/systemshm.c infra.c
+SRCS := /home/ether/self-openwrt/package/system/monitor/include/systemshm.c comm.c
 OBJS := $(SRCS:.c=.o)
-TARGET := infra
+TARGET := comm
 
 all: $(TARGET)
 

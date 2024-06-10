@@ -1,6 +1,10 @@
+#include "/home/ether/self-openwrt/package/system/monitor/include/systemshm.h"
 #include <stdio.h>
+#include <sys/shm.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#define PROCESS_NAME "upgrade.c"
 
 #define USB_PATH "/dev/sda1"
 #define USB_MOUNT_PATH "/mnt"
@@ -8,7 +12,12 @@
 
 int main() 
 {
-    printf("UPGRADE INIT!\n");
+    printf("[%s] START!\n", PROCESS_NAME);
+
+    // Check shm is ready
+    while(initShm(PROCESS_NAME) != true);
+    systemShm->ProcessShmStatus.bits.upgradeStatus = 1;
+    while(readyShm(PROCESS_NAME) != true);
 
     char cmd[128] = {0};
     while (1) 
