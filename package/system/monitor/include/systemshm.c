@@ -1,4 +1,4 @@
-#include "/home/ether/self-openwrt/package/system/monitor/include/systemshm.h"
+#include "systemshm.h"
 #include <sys/shm.h>
 #include <stddef.h>
 #include <unistd.h>
